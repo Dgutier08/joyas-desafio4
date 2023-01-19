@@ -20,9 +20,13 @@ const getJoyas = async ({ limits = 5, order_by = "id_ASC", page = 1 }) => {
         limits,
         offset
     )
-    console.log("format", formattedQuery);
-    const { rows: Joyas } = await pool(formattedQuery)
-    return Joyas;
+      const { rows: joyas, rowCount } = await pool.query(formattedQuery)
+    
+    if (rowCount === 0) {
+        throw { code: 404, message: `No se encontraron resultados` };
+      };
+    
+    return joyas;
     }
 
     //con filtros
@@ -52,20 +56,20 @@ const getJoyas = async ({ limits = 5, order_by = "id_ASC", page = 1 }) => {
     };
 
     const datosHATEOAS = (joyas) => {
-        const results = joyas
-          .map((p) => {
-            return {
-              name: n.nombre,
-              href: `/joyas/joyas/${n.id}`,
-            };
-          })
-          .slice(0, 4);
-        const total = productos.length;
+        const results = joyas.map((j) => {
+          return {
+            name: j.nombre,
+            href: `joyas/joya/${j.id}`,
+          }
+        });
+        const totalJoyas = joyas.length
+        const totalStock =  joyas.reduce((total, j) => total + j.stock, 0);
         const HATEOAS = {
-          TotalJoyas,
-          TotalStock,
-          Results
-        };
+          totalJoyas,
+          totalStock,
+          results
+        }
+      
         return HATEOAS;
       };
 

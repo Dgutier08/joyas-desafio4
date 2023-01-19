@@ -4,7 +4,7 @@ const app = express();
 const {getJoyas, getJoyasFiltro, datosHATEOAS } = require("./consultas");
 
 
-app.get("/Joyas", async (req, res) => {
+app.get("/joyas", async (req, res) => {
     try{
         const queryStrings = req.query;
         const joyas = await getJoyas(queryStrings);
